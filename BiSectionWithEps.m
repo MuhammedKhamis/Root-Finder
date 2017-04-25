@@ -11,7 +11,7 @@ function [numberofIterations , executionTime,iterations, root,persesion] = BiSec
      mid = (a+b)/2;
      i=0;
      mid1= -1;
-     iterations =[a b mid];
+     iterations =[a b mid 100];
      tic;
     while abs(f(mid)) > eps && i < MaxNumberOfIterations 
         fL = f(a);
@@ -23,7 +23,7 @@ function [numberofIterations , executionTime,iterations, root,persesion] = BiSec
         end
         mid1 = mid;
         mid = (a+b)/2;
-        iterations = [iterations;[a b mid]];
+        iterations = [iterations;[a b mid ((mid-mid1)/mid)]];
         i=i+1;
     end
     t = toc;

@@ -11,12 +11,12 @@ function [numberofIterations , executionTime,iterations, root,persesion] = Fixed
     f = inline(f + x);
     x2 = f(x1);
     i = 0;
-    iterations=[x1 x2];
+    iterations=[x1 x2 ((x2-x1)/x2)];
     tic;
     while abs(x2) > eps && i < MaxNumberOfIterations
         x1 = x2;
         x2 = f(x1);
-        iterations = [iterations; [x1 x2]];
+        iterations = [iterations; [x1 x2 ((x2-x1)/x2)]];
         i = i + 1;
     end
     executionTime = toc;

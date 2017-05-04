@@ -12,12 +12,12 @@ function [iterations] = FixedWithEps(f,x1,eps , MaxNumberOfIterations)
     i = 1;
     tic;
     x2 = f(x1);
-    iterations=[i x1 x2 ((x2-x1)/x2) toc];
+    iterations=[i x1 x2 abs(((x2-x1)/x2))*100 toc];
     while abs(x2) > eps && i < MaxNumberOfIterations
         x1 = x2;
         x2 = f(x1);
         i = i + 1;
-        iterations = [iterations; [i x1 x2 ((x2-x1)/x2) toc]];
+        iterations = [iterations; [i x1 x2 abs(((x2-x1)/x2))*100 toc]];
     end
 end
 

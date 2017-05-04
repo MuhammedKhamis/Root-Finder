@@ -24,6 +24,6 @@ function [iterations] = BiSectionWithEps(f,l,u,eps , MaxNumberOfIterations)
         mid1 = mid;
         mid = (a+b)/2;
         i=i+1;
-        iterations = [iterations;[i a b mid ((mid-mid1)/mid) toc]];
+        iterations = [iterations;[i a b mid abs(((mid-mid1)/mid))*100 toc]];
     end
 end

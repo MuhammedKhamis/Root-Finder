@@ -1,4 +1,4 @@
-function [numberofIterations , executionTime,iterations, root,persesion] = BiSectionWithEps(f,l,u,eps , MaxNumberOfIterations)
+function [iterations] = BiSectionWithEps(f,l,u,eps , MaxNumberOfIterations)
     if ~exist('MaxNumberOfIterations', 'var')
         MaxNumberOfIterations = 50;
     end
@@ -8,11 +8,11 @@ function [numberofIterations , executionTime,iterations, root,persesion] = BiSec
     f = inline(f);
      a = l;
      b = u;
-     mid = (a+b)/2;
-     i=0;
-     mid1= -1;
-     iterations =[a b mid 100];
      tic;
+     mid = (a+b)/2;
+     i=1;
+     mid1= -1;
+     iterations =[i a b mid 100 toc];
     while abs(f(mid)) > eps && i < MaxNumberOfIterations 
         fL = f(a);
         fM = f(mid);
@@ -23,12 +23,7 @@ function [numberofIterations , executionTime,iterations, root,persesion] = BiSec
         end
         mid1 = mid;
         mid = (a+b)/2;
-        iterations = [iterations;[a b mid ((mid-mid1)/mid)]];
         i=i+1;
+        iterations = [iterations;[i a b mid ((mid-mid1)/mid) toc]];
     end
-    t = toc;
-    numberofIterations = i;
-    executionTime = t;
-    root = mid;
-    persesion = (mid-mid1);
 end

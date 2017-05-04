@@ -1,4 +1,4 @@
-function [numberofIterations , executionTime,iterations, root,persesion] = SecantWithEps( f,x1,x2,eps, MaxNumberOfIterations)
+function [iterations] = SecantWithEps( f,x1,x2,eps, MaxNumberOfIterations)
     
     if ~exist('MaxNumberOfIterations', 'var')
         MaxNumberOfIterations = 50;
@@ -7,20 +7,17 @@ function [numberofIterations , executionTime,iterations, root,persesion] = Secan
         eps = 0.00001;
     end
     f = inline(f);
-    x3 = x2 - (f(x2)*(x1-x2))/(f(x1)-f(x2));
-    i = 0;
-    iterations = [x1 x2 x3 100];
+    i = 1;
     tic;
+    x3 = x2 - (f(x2)*(x1-x2))/(f(x1)-f(x2));
+    iterations = [i x1 x2 x3 100 toc];
     while abs(f(x3)) > eps && i <  MaxNumberOfIterations 
         x1 = x2;
         x2 = x3;
         x3 = x2 - (f(x2)*(x1-x2))/(f(x1)-f(x2));
-        iterations =[iterations;[x1 x2 x3 ((x3-x2)/x3)]];
         i = i+1;
+        iterations =[iterations;[i x1 x2 x3 ((x3-x2)/x3) toc]];
+        
     end
-    executionTime = toc;
-    root = x3;
-    numberofIterations = i;
-    persesion = x3-x2;
 end
 

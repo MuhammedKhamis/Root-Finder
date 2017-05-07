@@ -8,7 +8,10 @@ function [iterations] = FixedWithEps(f,x1,eps , MaxNumberOfIterations)
     end
 
     syms x;
-    f = inline(f + x);
+    f = sym(f);
+    f = taylor(f);
+    f = f-x;
+    f = inline(f);
     i = 1;
     tic;
     x2 = f(x1);

@@ -216,73 +216,45 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 set(handles.uitable1,'visible','on');
-methods = Methods;
 cell = handles.cell;
 f = get(handles.edit1,'String');
 iterations = get(handles.edit2,'String');
 tolerance = get(handles.edit3,'String');
+out = validateInput(f);
+if(strcmp(out,'not valid function'))
+    return;
+end
 if(isempty(iterations))
-    iterations = 50;
-   if(isempty(tolerance))
-       tolerance = .00001;
-   else
-       tolerance = str2doouble(tolerance);
-   end
-    else
-   iterations = str2double(iterations);
+     iterations = 50;
+       if(isempty(tolerance))
+            tolerance = .00001;
+       else
+            tolerance = str2doouble(tolerance);
+       end
+else
+     iterations = str2double(iterations);
 end
-if(~isempty(f))
-    methods.f = f;
      if(strcmp(cell , 'Bisection') ||strcmp( cell , 'False-position'))
-          left = get(handles.edit4,'String');
-          right = get(handles.edit5,'String');
-            if(isempty(left) || isempty(right))
-                return
-            else
-                left = str2double(left);
-                right = str2double(right);
-                dataTable = falsePosition(f,left,right,tolerance,iterations);
-                disp(dataTable);
-                set(handles.uitable1,'ColumnName',{'number of iterations', 'execution time', 'xLower','xUpper','previous','fXl','fXu','func(approximate root)','approximate root', 'precision'});
-                set(handles.uitable1,'data',dataTable);
-            end
+           biAndFalse(f,iterations,tolerance,handles);
     elseif(strcmp (cell , 'Fixed point') || strcmp (cell , 'Newton-Raphson'))
-           x0 =  get(handles.edit6,'String');
-           if(isempty(x0))
-                return
-           else
-                dfn = diff(f);
-                tableData = Newton(f, dfn,x0,tolerance,iterations);
-                disp(tableData);
-                %step                    x                       f                    df/dx            Approximate Error
-                set(handles.uitable1,'ColumnName',{'step', 'execution time', 'x','f','df/dx', 'Approximate Error'});
-                set(handles.uitable1,'data',tableData);
-           end
+           fixedAndNewton(f,iterations,tolerance,handles);
     elseif(strcmp(cell , 'Secant'))
-           set(handles.uipanel6,'visible','on');
-           set(handles.uipanel2,'visible','off');
-           set(handles.uipanel4,'visible','off');
-           set(handles.uipanel5,'visible','on');
+           secantGui(f,iterations,tolerance,handles);
     elseif(strcmp(cell , 'All methods'))
-           set(handles.uipanel6,'visible','on');
-           set(handles.uipanel2,'visible','on');
-           set(handles.uipanel4,'visible','on');
-           set(handles.uipanel5,'visible','on');
+           numOfIterations = biAndFalse(f,iterations,tolerance,handles);
+           numOfIterations = [numOfIterations fixedAndNewton(f,iterations,tolerance,handles)];
+           numOfIterations = [numOfIterations secantGui(f,iterations,tolerance,handles)];
+           numOfIterations = [numOfIterations birgeVietaGui(f,iterations,tolerance,handles)];
+           histogramPlotForAllMethods(numOfIterations)
     elseif(strcmp(cell , 'Bierge-Vieta'))
-           x0 =  get(handles.edit10,'String');
-           if(isempty(x0))
-                return
-            else
-                x0 = str2double(x0);
-                tableData = Birge_Vieta(f,x0,tolerance,iterations);
-                disp(tableData);
-                %set(handles.uitable1,'ColumnName',{'number of iterations', 'execution time', 'xLower','xUpper','previous','fXl','fXu','func(approximate root)','approximate root', 'precision'});
-                set(handles.uitable1,'data',tableData);
-           end
+           birgeVietaGui (f,iterations,tolerance,handles);
      end
-end
 
-
+    function histogramPlotForAllMethods(numOfIterations)
+       %disp(numOfIterations);
+       histogram('Categories',{'Bisection','False-position','Fixed point','Newton-Raphson','Secant','Bierge-Vieta'},'BinCounts',[1 2 3 4 5 6])
+      % h = histogram(numOfIterations);
+       %h.Categories = {'Bisection','False-position','Fixed point','Newton-Raphson','Secant','Bierge-Vieta'};
 
 
 

@@ -5,7 +5,7 @@ else
     func=str;
 end
 counter=1;
-firstHelp=[0 0 0 0 0 x0];
+firstHelp=[0 0 0 0 0 x0 x0 0];
 help=firstHelp;
 flag=1;
 while(counter<=length(func))

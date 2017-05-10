@@ -29,9 +29,9 @@ function [iterations] = FixedWithEps(f,x1,eps , MaxNumberOfIterations)
     end
     %sill not work.
      fileID = fopen('outputFixedPoint.txt','wt');
-         fprintf(fileID,'%6s %12s %12s %12s %12s\r\n','i', 'x1', 'x2', 'abs(((x2-x1)/x2))*100','time');
+         fprintf(fileID,'%6s %35s %12s %12s %12s %12s %12s %12s\r\n','i', 'x1', 'x2', 'abs(((x2-x1)/x2))*100', time);
          for i = 1:size(iterations)
-            fprintf(fileID,'%6s %12s %12s %12s %12s\r\n',iterations(i,:));
+            fprintf(fileID,'%6f %16f %38f %12f %12f %12f %12f %12f\r\n',iterations(i,:));
          end
      fclose(fileID);
 end

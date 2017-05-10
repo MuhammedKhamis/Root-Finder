@@ -20,9 +20,9 @@ function [iterations] = SecantWithEps( f,x1,x2,eps, MaxNumberOfIterations)
     end
     
     fileID = fopen('outputSecant.txt','wt');
-         fprintf(fileID,'%6s %12s %14s %14s %30s %12s\r\n','i', 'x1', 'x2','x3', 'error','time');
+         fprintf(fileID,'%6s %12s %12s %14s %17s %12s\r\n','i', 'x1', 'x2','x3', 'abs(((x2-x1)/x2))*100','time');
          for i = 1:size(iterations)
-            fprintf(fileID,'%15f %12f  %12f %12f %17f %22f\r\n',iterations(i,:));
+            fprintf(fileID,'%12f %12f  %12f %12f %17f %12f\r\n',iterations(i,:));
          end
      fclose(fileID);
 end

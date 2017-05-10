@@ -26,4 +26,11 @@ function [iterations] = BiSectionWithEps(f,l,u,eps , MaxNumberOfIterations)
         i=i+1;
         iterations = [iterations;[i a b mid abs(((mid-mid1)/mid))*100 toc]];
     end
+    
+     fileID = fopen('outputBisection.txt','wt');
+         fprintf(fileID,'%10s %15s %12s %12s %14s %12s\r\n','i' ,'a' ,'b' ,'mid' ,'error', 'time');
+         for i = 1:size(iterations)
+            fprintf(fileID,'%17f %12f %12f %12f %12f %12f\r\n',iterations(i,:));
+         end
+     fclose(fileID);
 end

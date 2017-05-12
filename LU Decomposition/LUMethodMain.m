@@ -8,15 +8,16 @@ function [solutionTable,finalMatrix,solutions,condition] = LUMethodMain(coeffici
 %            finalMatrix     Contains the final values of the L and U.
 %            solutions       A column matrix that contains the result values of the system.
 %           condition        error flag indicates of anything went wrong during executing the method.
-    [L U condition solutionTable] = getLU(coefficient);
+    tol = 1e-6;
+    [decomp condition solutionTable pos results] = getLU(coefficient,tol,results);
     if(condition == 1)
         return;
     end
-    [y steps] = getY(L,results);
-    [x condition steps] = getX(U,y);
+    n = size(coefficient);
+    x = substitude(decomp,pos,n(1),results);
     if(condition == 1)
         return;
     end
-    finalMatrix = [L U];
+    finalMatrix = [];
     solutions = x;
 end

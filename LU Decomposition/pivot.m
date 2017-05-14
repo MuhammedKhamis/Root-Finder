@@ -1,4 +1,4 @@
-function [pos A b] = pivot(A,pos,scale,start,n,b)
+function [pos A b l] = pivot(A,pos,scale,start,n,b,l)
     p = start;
     big = abs(A(pos(start),start)/scale(pos(start)));
     for j = start : n
@@ -11,11 +11,14 @@ function [pos A b] = pivot(A,pos,scale,start,n,b)
     tmp = pos(p);
     row = A(pos(p),:);
     tmp2 = b(pos(p));
+    row2 = l(pos(p),:);
     
     b(pos(p)) = b(pos(start));
     A(pos(p),:) = A(pos(start),:);
+    l(pos(p),:) = l(pos(start),:);
     pos(p) = pos(start);
     
+    l(pos(start),:) = row2;
     b(pos(start)) = tmp2;
     A(pos(start),:)= row;
     pos(start)=tmp;

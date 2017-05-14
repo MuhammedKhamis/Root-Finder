@@ -10,6 +10,7 @@ function [decomp err steps pos b] = getLU(A,tol,b)
     sizes = size(A);
     err = 0;
     steps = [];
+    L = zeros(size(A));
     if(sizes(1) == sizes(2))
        pos = zeros(1,sizes(1));
        scale = zeros(1,sizes(1));
@@ -23,21 +24,32 @@ function [decomp err steps pos b] = getLU(A,tol,b)
        end
        % main Decomposition
        for i = 1 : sizes(1)
-          [pos, A, b] = pivot(A,pos,scale,i,sizes(1),b);
+          [pos, A, b, L] = pivot(A,pos,scale,i,sizes(1),b,L);
           if(abs(A(pos(i),i)/scale(pos(i))) < tol)
             err = 1;
             return;
           end
           for j = i+1 : sizes(1)
-          factor = A(pos(j),i)/A(pos(i),i);
-          A(pos(j),i) = factor;
-          for k = i+1 : sizes(1)
-            A(pos(j),k) =  A(pos(j),k) - factor*A(pos(i),k);
-          end
-          end
-       steps = [steps;A];
-       end  
-       
+              factor = A(pos(j),i)/A(pos(i),i);
+              L(pos(j),i) = factor;
+              for k = i : sizes(1)
+                A(pos(j),k) =  A(pos(j),k) - factor*A(pos(i),k);
+              end
+              % This loop for putting thing in good order as the pivoting
+              % changes the postions of the rows and this will appear in A
+              % if you want to see the changes just comment the loop and
+              % line before and after them
+              % for tidy order
+              steps = [steps;getTityOrder(A,pos)];
+              % end tidy order
+              %if you want to see the changes due to pivoting uncomment
+              %this line put comment the lines above.
+              %steps = [steps;A];    
+          end          
+       end
+       % same as in A Matrix
+       steps = [steps;getTityOrder(L,pos)];
+       %steps = [steps;L];
        if(abs(A(pos(sizes(1)),sizes(1))/scale(pos(sizes(1)))) < tol)
            err = 1;
            return;
@@ -45,5 +57,5 @@ function [decomp err steps pos b] = getLU(A,tol,b)
     else
         err = 1;
     end
-    decomp = A;
+    decomp = (A+L);
 end

@@ -14,10 +14,10 @@ function [solutionTable,finalMatrix,solutions,condition] = LUMethodMain(coeffici
         return;
     end
     n = size(coefficient);
-    x = substitude(decomp,pos,n(1),results);
+    [x, y] = substitude(decomp,pos,n(1),results);
     if(condition == 1)
         return;
     end
-    finalMatrix = [];
+    finalMatrix = y;
     solutions = x;
 end

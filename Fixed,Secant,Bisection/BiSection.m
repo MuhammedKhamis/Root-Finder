@@ -10,33 +10,55 @@ function [iterations , numberOfIterations] = BiSection(f,l,u,eps , MaxNumberOfIt
     %Output:    
     %           iterations               2D array its content explained later down.
     %           numberOfIterations       total number of iterations calculated from the rule.
+    %----------------------------------------------------------------------
+    %setting the maximum number of iterations if it isn't given as input.
     if ~exist('MaxNumberOfIterations', 'var')
         MaxNumberOfIterations = 50;
     end
+    %setting the value of eps if it isn't given to the method as input.
     if ~exist('eps', 'var')
         eps = 0.00001;
     end
+    % converting the string input function to inline function in order to
+    % use it the the values of Ys against Xs.
     f = inline(f);
+    % setting the lower bound to a.
     a = l;
+    % setting the upper bound to b.
     b = u;
+    % calculating the mid as root.
     mid = (a+b)/2;
+    % counter for iterations.
     i=1;
+    % temperary value inorder to save the last mid calculated before
+    % calculating the new one.
     mid1= -1;
     tic;
+    %%output data set.
     %[Iteration, firstBound, root , secondBound, RelativeApproximateError, Time]%
     iterations =[i a mid b 100 toc];
+    % loop for iterating.
     while abs(f(mid)) >= eps && i < MaxNumberOfIterations 
+        % getting the f(l).
         fL = f(a);
+        % getting the f(mid).
         fM = f(mid);
+        % deteriming the next bounds (a and b).
         if( fL * fM < 0)
           b = mid;
         else
           a = mid;
         end
+        %-----------------------------
+        % saving the last value of mid.
         mid1 = mid;
+        % setting the new value of mid.
         mid = (a+b)/2;
         i=i+1;
-        iterations = [iterations;[i a mid b abs(((mid-mid1)/mid))*100 toc]];
+        % adding iteration details to the output data set.
+        iterations = [iterations;[i a mid b abs(mid-mid1) toc]];
     end
-    numberOfIterations = ceil(log2(abs(abs(l-u)/eps)));
+    % calculating the maximum number of iterations needed.
+    numberOfIterations = log2(abs(abs(l-u)/eps));
+    numberOfIterations = ceil(numberOfIterations);
 end

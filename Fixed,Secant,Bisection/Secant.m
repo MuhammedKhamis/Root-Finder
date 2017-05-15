@@ -9,24 +9,38 @@ function [iterations] = Secant( f,x1,x2,eps, MaxNumberOfIterations)
     %           MaxNumberOfIterations    number of iterations specified.
     %Output:
     %           iterations               2D array its content explained later down.
+    %----------------------------------------------------------------------
+    %setting the maximum number of iterations if it isn't given as input.
     if ~exist('MaxNumberOfIterations', 'var')
         MaxNumberOfIterations = 50;
     end
+    %setting the value of eps if it isn't given to the method as input.
     if ~exist('eps', 'var')
         eps = 0.00001;
     end
+    % converting the string input function to inline function in order to
+    % use it the the values of Ys against Xs.
     f = inline(f);
+    % counter for iterations.
     i = 1;
+    % starting to calculating the time.
     tic;
+    % first calculation of the root.
     x3 = x2 - (f(x2)*(x1-x2))/(f(x1)-f(x2));
-    %%[iteration, leastPoint, Root, LastPoint, RelativeApproximateError, Time]%%
-    iterations = [i x1 x2 x3 abs(((x3-x2)/x3))*100 toc];
+    %%output data set.
+    %[iteration, leastPoint, currentRoot, LastPoint, RelativeApproximateError, Time]
+    iterations = [i x1 x2 x3 abs(((x3-x2))) toc];
+    % loop for iterating.
     while abs(f(x3)) > eps && i <  MaxNumberOfIterations 
+        % setting the second point value to first point. 
         x1 = x2;
+        % setting the third point value to second point.
         x2 = x3;
+        % calculating the value of the root using secant formula.
         x3 = x2 - (f(x2)*(x1-x2))/(f(x1)-f(x2));
         i = i+1;
-        iterations =[iterations;[i x1 x3 x2 abs(((x3-x2)/x3))*100 toc]];
+        % adding the iteration info the the output set.
+        iterations =[iterations;[i x1 x3 x2 abs(x3-x2) toc]];
     end
 end
 

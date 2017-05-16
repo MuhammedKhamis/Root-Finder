@@ -7,7 +7,7 @@ intialize=0;
 %{condition=0 for no error ,condition=1 for division by 0%}
 %{solutions is the values of x's%}
 while (diagonalCounter<length(1)&&flag==0)
-        maxCounter = diagonalCounter
+        maxCounter = diagonalCounter;
         rowCounter=diagonalCounter+1;
         max=abs(help(diagonalCounter,diagonalCounter));
         while( rowCounter<=length(1))

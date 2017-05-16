@@ -22,7 +22,7 @@ function varargout = GUI2(varargin)
 
 % Edit the above text to modify the response to help GUI2
 
-% Last Modified by GUIDE v2.5 12-May-2017 02:43:35
+% Last Modified by GUIDE v2.5 15-May-2017 23:57:45
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -52,30 +52,7 @@ function GUI2_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to GUI2 (see VARARGIN)
 
-
-    f = handles.figure1;
-    %matrix table
-    t = uitable('Parent',f,'Position',[60 60 400 300]);
-    handles.table = t;
-    set(t, 'RowName', []);
-    set(t, 'ColumnName', []);
-    set(t, 'ColumnWidth', 'auto');
-    
-    %iterative table
-    t2 = uitable('Parent',f,'Position',[60 60 550 300]);
-    handles.table2 = t2;
-    set(t2, 'RowName', []);
-    %arr = ['dsaads' , 'dasdas'];
-    set(t2, 'ColumnName', []);
-    set(t2, 'ColumnWidth', 'auto');
-
-    
-    %buttons
-    set(handles.next_button,'Visible','off');
-
-    %tables
-    set(handles.table,'Visible','off');
-    set(handles.table2,'Visible','off');
+   handles =  buildGUI(handles);
 
 % Choose default command line output for GUI2
 handles.output = hObject;
@@ -103,30 +80,12 @@ function method_menu_Callback(hObject, eventdata, handles)
 % hObject    handle to method_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+    getappdata(handles.figure1,'solutionTable')
     selected_item = get(hObject,'Value');
     setappdata(handles.figure1,'selected_item',selected_item); 
-    switch selected_item
-        case 1
-            flags = {'on','on','on','on','on','on','on','on','on','on','on','on','off','off','off'};
-            
-        case 2
-            flags = {'off','off','off','off','off','off','off','off','off','off','off','off','on','on','off'};
-            
-        case 3
-            flags = {'off','off','off','off','off','off','off','off','off','off','off','off','on','on','off'};
-        
-        case 4            
-            flags = {'off','off','off','off','off','off','off','off','off','off','off','off','on','on','off'};
-        
-        case 5
-            flags = {'off','off','off','off','on','on','on','on','on','on','off','off','off','off','on'};
-        
-        case 6
-            flags = {'off','off','off','off','on','on','on','on','on','on','off','off','off','off','on'};
-        
-        otherwise
-    end
-    showView(handles,flags);
+    handles = showView(handles,selected_item);
+    get(handles.table,'Visible')
+    %set(handles.table2,'Visible','off');
 % Hints: contents = cellstr(get(hObject,'String')) returns method_menu contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from method_menu
 
@@ -213,88 +172,119 @@ function solve_button_Callback(hObject, eventdata, handles)
     %getting input and parse it
     data = get(handles.input_equations_textArea,'String');
     [A,B,flag] = MatrixParser(data);
-    %disp(flag);
     if(flag == 0)
-        callError(handles.comment_textArea,'invalid input equations',handles);
+        handles = callError(handles.comment_textArea,'invalid input equations',handles);
         return
     end
-    %swicth on functions
-    ind = getappdata(handles.figure1,'selected_item');
     
+    %getting extra inputs in case of iterative functions
+    ind = getappdata(handles.figure1,'selected_item'); 
     if(ind == 1)
-        [initial1,tolerance1,iteration1,flag1] = getIterativeParameters(handles,1);
-        [initial2,tolerance2,iteration2,flag2] = getIterativeParameters(handles,2);
+        [initial1,tolerance1,iteration1,flag1] = getIterativeParameters(handles,1,length(B));
+        [initial2,tolerance2,iteration2,flag2] = getIterativeParameters(handles,2,length(B));
         if(flag1==0 | flag2==0)
-            callError(handles.comment_textArea,'invalid extra inputs',handles);
+            handles = callError(handles.comment_textArea,'invalid extra inputs',handles);
+            return;
         end
     elseif(ind == 5 | ind == 6)
-        [initial,tolerance,iteration,flag] = getIterativeParameters(handles,1)
-        A
+        [initial,tolerance,iteration,flag] = getIterativeParameters(handles,1,length(B))
         if(flag == 0 )
-            callError(handles.comment_textArea,'invalid extra inputs',handles);
+            disp('error in  extra inputs');
+            handles = callError(handles.comment_textArea,'invalid extra inputs',handles);
+            return;
         end
-        %B = B'
-        %JacobSeidel(A,B,initial,iteration,tolerance);
+        disp('initial values');
+        disp(initial);
     else
     end;
     
-    callError(handles.comment_textArea,'',handles);
+    handles = clearTables(handles);
     solutionTable = [];
     solutions = [];
     len = 0;
+    
+    %swithcing on functions
     switch ind    
         case 1
-            
+            [solutionTable,finalMatrix,solutions,err1] = Gauss(A,B);
+            [solutionTable,finalMatrix,solutions,err2] = LUMethodMain(A,B);
+            [solutionTable,finalMatrix,solutions,err3] = GaussJordan(A,B);
+            [tablee,err4] = GaussSeidel(A,B,initial1,iteration1,tolerance1);
+            [tablee,err5] = JacobiIterative(A,B,initial2,iteration2,tolerance2);
+            if(logical(err1|err2|err3|err4|err5)==1)
+                handles = callError(handles.comment_textArea,'cannot get solution form Some Methods',handles);
+                return;
+            end
+               
         case 2
-            [solutionTable,finalMatrix,solutions,condition] = Gauss(A,B)
+            [solutionTable,finalMatrix,solutions,condition] = Gauss(A,B);
             if(condition == 0)
                 len = length(solutions);
                 originalMatrix = horzcat(A,B);
-                cell = num2cell(double(originalMatrix));
-                set(handles.table,'Data',cell);
+                solutionTable = [originalMatrix;solutionTable];
             else
-                callError(handles.comment_textArea,'Gauss Elimination : cannot get solution',handles);
+                handles = callError(handles.comment_textArea,'Gauss Elimination : cannot get solution',handles);
                 return
             end
+            
         case 3
             [solutionTable,finalMatrix,solutions,condition] = LUMethodMain(A,B)
             if(condition == 0)
                 set(handles.table,'Data',{});
                 len = length(A);
                 originalMatrix = A;
-                cell = num2cell(double(originalMatrix));
-                set(handles.table,'Data',cell);
+                solutionTable = [originalMatrix;solutionTable];
                 setappdata(handles.figure1,'ySolutions',finalMatrix)
             else
-                callError(handles.comment_textArea,'LU Decomposition : cannot get solution',handles);
+                handles = callError(handles.comment_textArea,'LU Decomposition : cannot get solution',handles);
                 return
             end
+            
         case 4
             [solutionTable,finalMatrix,solutions,condition] = GaussJordan(A,B)
             if(condition == 0)
                 len = length(solutions);
                 originalMatrix = horzcat(A,B);
-                cell = num2cell(double(originalMatrix));
-                set(handles.table,'Data',cell);
+                solutionTable = [originalMatrix;solutionTable];
             else
-                callError(handles.comment_textArea,'Gauss Jordan : cannot get solution',handles);
+                handles = callError(handles.comment_textArea,'Gauss Jordan : cannot get solution',handles);
                 return
             end
+            
         case 5
-           
+            [tablee,err] = GaussSeidel(A,B,initial,iteration,tolerance);
+            if(err == 0)
+                colNames = getColNames(length(initial));
+                set(handles.table2,'ColumnName',colNames);
+                set(handles.table2,'Data',tablee);
+            else
+                handles = callError(handles.comment_textArea,'Gauss Siedel : cannot get solution',handles);
+                return
+            end
+            
         case 6
-         
+            [tablee,err] = JacobiIterative(A,B,initial,iteration,tolerance);
+            if(err == 0)
+                colNames = getColNames(length(initial));
+                set(handles.table2,'ColumnName',colNames);
+                set(handles.table2,'Data',tablee);
+            else
+                handles = callError(handles.comment_textArea,'Jacob Siedel : cannot get solution',handles);
+                return
+            end
         otherwise
     end 
-        
+    
+    set(handles.comment_textArea,'String','Successfull Solution');
     setappdata(handles.figure1,'len',len); 
     setappdata(handles.figure1,'solutionTable',solutionTable); 
     setappdata(handles.figure1,'ind',1);
     setappdata(handles.figure1,'solutions',solutions);
     
+    if(ind>1 & ind<=4)
+         next_button_Callback(handles.next_button, eventdata, handles);
+    end
     
-    % switch cases on selected from pop menu then call the function
-    %disp(input_equations)
     
 function initial_values_txtArea2_Callback(hObject, eventdata, handles)
 % hObject    handle to initial_values_txtArea2 (see GCBO)
@@ -372,27 +362,28 @@ function next_button_Callback(hObject, eventdata, handles)
     startInd = getappdata(handles.figure1,'ind');
     % lenn = number of variables
     lenn = getappdata(handles.figure1,'len');
-    matrix = getappdata(handles.figure1,'solutionTable');
+    matrix = getappdata(handles.figure1,'solutionTable')
     disp('start')
     disp(startInd)
-    [r,c] = size(matrix)
-    %disp('rows ')
-    %disp(r)
+    [r,c] = size(matrix);
+    disp('rows ')
+    disp(r)
     if (startInd > r)
         %in case of LU Decompsition to show [y] then [x]
         if(getappdata(handles.figure1,'selected_item') == 3)
             disp('LU');
             if(startInd == r+1)
-                getappdata(handles.figure1,'ySolutions')
                 set(handles.table,'Data',getappdata(handles.figure1,'ySolutions'));
-                setappdata(handles.figure1,'ind',startInd+1);
+                setappdata(handles.figure1,'ind',r+2);
             else
                 set(handles.table,'Data',getappdata(handles.figure1,'solutions'));
+                setappdata(handles.figure1,'ind',r+3);
             end
             return;
         end
         % show solutions [x]
         set(handles.table,'Data',getappdata(handles.figure1,'solutions'));
+        setappdata(handles.figure1,'ind',r+2);
         return;
     end
     %disp(startInd)
@@ -401,7 +392,41 @@ function next_button_Callback(hObject, eventdata, handles)
     set(handles.table,'Data',cell);
 
     
-
+% --- Executes on button press in prev_button.
+function prev_button_Callback(hObject, eventdata, handles)
+% hObject    handle to prev_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    endInd = getappdata(handles.figure1,'ind');
+    % lenn = number of variables
+    lenn = getappdata(handles.figure1,'len');
+    matrix = getappdata(handles.figure1,'solutionTable');
+    [r,c] = size(matrix);
+    disp(lenn);
+    disp(endInd);
+    
+    if (endInd - 2*lenn < 1)
+        cell = getCell(1,lenn,matrix)
+        set(handles.table,'Data',cell);
+        return;
+    end
+    %disp(startInd)
+    if(endInd == r + 2)
+        setappdata(handles.figure1,'ind',r+1);
+        cell = getCell(r-lenn+1,lenn,matrix);
+        set(handles.table,'Data',cell);
+        return;
+    elseif(endInd == r+3)
+        setappdata(handles.figure1,'ind',r+2);
+        set(handles.table,'Data',getappdata(handles.figure1,'ySolutions'));
+        return;
+    else
+    end;
+    
+    cell = getCell(endInd-2*lenn,lenn,matrix);
+    set(handles.table,'Data',cell);
+    setappdata(handles.figure1,'ind',endInd-lenn);
+    
 
 
 function iterations_txtArea1_Callback(hObject, eventdata, handles)
@@ -456,3 +481,4 @@ function file_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
     [fileName,pathName] = uigetfile('*.txt','Select the input txt file');
     readFile(fileName,pathName,handles);
+

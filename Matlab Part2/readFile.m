@@ -21,28 +21,42 @@ function [error,equations,init1,toler1,iter1,init2,toler2,iter2] = readFile(file
         numberOfEquations = fscanf(fileID,'%d')
         indOfLine = 1;
         while ~feof(fileID)
-            disp(indOfLine);
+            %disp(indOfLine);
             indOfLine = indOfLine + 1;
             if indOfLine <= numberOfEquations+1
                 tline = fgetl(fileID)
                 equations{indOfLine-1} = tline;
-            elseif indOfLine == numberOfEquations + 2
-                init1 = fgetl(fileID);
-            elseif indOfLine == numberOfEquations + 3
-                toler1 = fgetl(fileID);
-            elseif indOfLine == numberOfEquations + 4
-                iter1 = fgetl(fileID);
-            elseif indOfLine == numberOfEquations + 5
-                init2 = fgetl(fileID);
-            elseif indOfLine == numberOfEquations + 6
-                toler2 = fgetl(fileID);
-            elseif indOfLine == numberOfEquations + 7
-                iter2 = fgetl(fileID);
             else
+                type = fgetl(fileID);
+                if (strcmp(type,'initial'))
+                    if (strcmp(init1,''))
+                        init1 = fgetl(fileID);
+                    else
+                        init2 = fgetl(fileID);
+                    end
+                elseif (strcmp(type,'iterations'))    
+                    if (strcmp(iter1,''))
+                        iter1 = fgetl(fileID);
+                    else
+                        iter2 = fgetl(fileID);
+                    end
+                elseif (strcmp(type,'tolerance'))
+                    if (strcmp(toler1,''))
+                        toler1 = fgetl(fileID);
+                    else
+                        toler2 = fgetl(fileID);
+                    end
+                else
+                    error = 1;
+                end
             end        
         end
         fclose(fileID);
         
+        equations
+        init1
+        toler1
+        iter1
         set(handles.input_equations_textArea,'String',equations);
         set(handles.initial_values_txtArea,'String',init1);
         set(handles.tolerance_txtArea,'String',toler1);

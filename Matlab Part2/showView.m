@@ -1,7 +1,32 @@
-function [ output_args ] = showView( handles , flag)
+function [ handles ] = showView( handles , selected_item)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-    chars = char(flag);
+    disp('showView');
+    disp(selected_item);
+    
+    switch selected_item
+        case 1
+            flags = {'on','on','on','on','on','on','on','on','on','on','on','on','off','off','off','off'};
+            
+        case 2
+            flags = {'off','off','off','off','off','off','off','off','off','off','off','off','on','on','on','off'};
+            
+        case 3
+            flags = {'off','off','off','off','off','off','off','off','off','off','off','off','on','on','on','off'};
+        
+        case 4            
+            flags = {'off','off','off','off','off','off','off','off','off','off','off','off','on','on','on','off'};
+        
+        case 5
+            flags = {'off','off','off','off','on','on','on','on','on','on','off','off','off','off','off','on'};
+        
+        case 6
+            flags = {'off','off','off','off','on','on','on','on','on','on','off','off','off','off','off','on'};
+        
+        otherwise
+    end
+    
+    flag = flags;
     set(handles.initial_values_label2,'Visible',char(flag(1)));
     set(handles.initial_values_txtArea2,'Visible',char(flag(2)));
     set(handles.tolerance_label2,'Visible',char(flag(3)));
@@ -17,10 +42,11 @@ function [ output_args ] = showView( handles , flag)
     
     %buttons
     set(handles.next_button,'Visible',char(flag(13)));
+    set(handles.prev_button,'Visible',char(flag(14)));
 
     %tables
-    set(handles.table,'Visible',char(flag(14)));
-    set(handles.table2,'Visible',char(flag(15)));    
+    set(handles.table,'Visible',char(flag(15)));
+    set(handles.table2,'Visible',char(flag(16)));    
 
 end
 

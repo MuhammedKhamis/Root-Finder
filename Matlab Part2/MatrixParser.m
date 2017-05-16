@@ -4,11 +4,9 @@ function [A,B,flag] = MatrixParser(data)
     try
         cells = cellstr(data);
         cells = cellstr(strrep(cells(1:1:length(cells)),'=' , '=='));
-        %disp(cells(1))
-        %disp(cells(2))
         symbols = sym('x',[1 length(cells)]);
         %strjoin(cells(1:1:length(cells)))
-        [A, B] = equationsToMatrix(cells(1:1:length(cells)),symbols)
+        [A, B] = equationsToMatrix(cells(1:1:length(cells)),symbols);
         
         flag = 1;
         for i=1:length(B)

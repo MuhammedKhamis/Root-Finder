@@ -3,7 +3,7 @@ function [ solutionTable,finalMatrix,solutions,condition] = Gauss(coefficient,re
 finalMatrix=help;
     if (condition==0)
         solutions=backSubistitution(help);
-        disp(solutionTable);
+        %disp(solutionTable);
     else
         solutions=0; 
         return;

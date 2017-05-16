@@ -1,0 +1,20 @@
+classdef Methods
+    %METHODS Summary of this class goes here
+    %   Detailed explanation goes here
+    
+    properties
+        left
+        right
+        intialGussOne
+        intialGussTwo
+        f
+    end
+    
+    methods
+        function r = Bisection(obj,iterations,precision)
+            
+        end
+    end
+    
+end
+

@@ -22,7 +22,7 @@ function varargout = GUI2(varargin)
 
 % Edit the above text to modify the response to help GUI2
 
-% Last Modified by GUIDE v2.5 15-May-2017 23:57:45
+% Last Modified by GUIDE v2.5 17-May-2017 14:30:58
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -171,7 +171,7 @@ function solve_button_Callback(hObject, eventdata, handles)
    
     %getting input and parse it
     data = get(handles.input_equations_textArea,'String');
-    [A,B,flag] = MatrixParser(data);
+    [A,B,flag] = MatrixParser(data)
     if(flag == 0)
         handles = callError(handles.comment_textArea,'invalid input equations',handles);
         return
@@ -209,13 +209,17 @@ function solve_button_Callback(hObject, eventdata, handles)
             [solutionTable,finalMatrix,solutions,err1] = Gauss(A,B);
             [solutionTable,finalMatrix,solutions,err2] = LUMethodMain(A,B);
             [solutionTable,finalMatrix,solutions,err3] = GaussJordan(A,B);
-            [tablee,err4] = GaussSeidel(A,B,initial1,iteration1,tolerance1);
-            [tablee,err5] = JacobiIterative(A,B,initial2,iteration2,tolerance2);
+            [tablee1,err4] = GaussSeidel(A,B,initial1,iteration1,tolerance1);
+            [tablee2,err5] = JacobiIterative(A,B,initial2,iteration2,tolerance2);
             if(logical(err1|err2|err3|err4|err5)==1)
                 handles = callError(handles.comment_textArea,'cannot get solution form Some Methods',handles);
                 return;
             end
-               
+            handles = drawPlotting(tablee1,tablee2,1,handles);
+            setappdata(handles.figure1,'plotInd',1);
+            setappdata(handles.figure1,'solutionTable1',tablee1);
+            setappdata(handles.figure1,'solutionTable2',tablee2);
+            setappdata(handles.figure1,'variables',length(solutions));
         case 2
             [solutionTable,finalMatrix,solutions,condition] = Gauss(A,B);
             if(condition == 0)
@@ -482,3 +486,31 @@ function file_button_Callback(hObject, eventdata, handles)
     [fileName,pathName] = uigetfile('*.txt','Select the input txt file');
     readFile(fileName,pathName,handles);
 
+
+% --- Executes on button press in next_plot.
+function next_plot_Callback(hObject, eventdata, handles)
+% hObject    handle to next_plot (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    plot_ind = getappdata(handles.figure1,'plotInd')+1;
+    if(plot_ind > getappdata(handles.figure1,'variables'))
+        return;
+    end
+    tablee1 = getappdata(handles.figure1,'solutionTable1');
+    tablee2 = getappdata(handles.figure1,'solutionTable2');
+    drawPlotting(tablee1,tablee2,plot_ind,handles);
+    setappdata(handles.figure1,'plotInd',plot_ind);
+
+% --- Executes on button press in prev_plot.
+function prev_plot_Callback(hObject, eventdata, handles)
+% hObject    handle to prev_plot (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    plot_ind = getappdata(handles.figure1,'plotInd')-1;
+    if(plot_ind <= 0)
+        return;
+    end
+    tablee1 = getappdata(handles.figure1,'solutionTable1');
+    tablee2 = getappdata(handles.figure1,'solutionTable2');
+    drawPlotting(tablee1,tablee2,plot_ind,handles);
+    setappdata(handles.figure1,'plotInd',plot_ind);

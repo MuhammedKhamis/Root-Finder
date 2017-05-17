@@ -46,7 +46,7 @@ function [ handles ] = showView( handles , selected_item)
 
     %tables
     set(handles.table,'Visible',char(flag(15)));
-    set(handles.table2,'Visible',char(flag(16)));    
-
+    set(handles.table2,'Visible',char(flag(16)));
+    
 end
 

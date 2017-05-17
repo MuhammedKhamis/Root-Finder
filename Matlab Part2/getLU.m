@@ -29,7 +29,10 @@ function [decomp err steps pos b] = getLU(A,tol,b)
        for i = 1 : sizes(1)
           [pos, A, b, L] = pivot(A,pos,scale,i,sizes(1),b,L);
           if(abs(A(pos(i),i)/scale(pos(i))) < tol)
-            err = 1;
+              decomp = [];
+              steps = [];
+              pos = [];
+              err = 1;
             return;
           end
           for j = i+1 : sizes(1)
@@ -54,10 +57,16 @@ function [decomp err steps pos b] = getLU(A,tol,b)
        steps = [steps;getTityOrder(L,pos)];
        %steps = [steps;L];
        if(abs(A(pos(sizes(1)),sizes(1))/scale(pos(sizes(1)))) < tol)
-           err = 1;
-           return;
+            decomp = [];
+            steps = [];
+            pos = [];
+            err = 1;
+            return;
        end
     else
+        decomp = [];
+        steps = [];
+        pos = [];
         err = 1;
     end
     decomp = A;

@@ -11,5 +11,10 @@ function [ handles ] = clearTables( handles )
     set(handles.table, 'ColumnName', []);
     set(handles.table2, 'ColumnName', []);
     set(handles.comment_textArea,'String','');
+    
+    cla;
+    set(handles.plot_diagram,'Visible','off');
+    set(handles.prev_plot,'Visible','off');
+    set(handles.next_plot,'Visible','off');
 end
 

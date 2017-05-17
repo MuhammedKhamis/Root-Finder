@@ -11,6 +11,9 @@ function [solutionTable,finalMatrix,solutions,condition] = LUMethodMain(coeffici
     tol = 1e-6;
     [decomp condition solutionTable pos results] = getLU(coefficient,tol,results);
     if(condition == 1)
+        solutionTable = [];
+        finalMatrix =[];
+        solutions = [];
         return;
     end
     n = size(coefficient);

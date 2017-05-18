@@ -23,15 +23,15 @@ function [solutionTable,finalMatrix,solutions,condition] = LUMethodMain(coeffici
     end
     finalMatrix = y;
     solutions = x;
-    
-    
-    
+   
     
     
     %output in file
+    %fileName = strcat('C:\Users\amrmh_000\Desktop\outputs\',fileName);
+    fileName = strcat(pwd,'\outputLUDecomposition.txt');
     fileID = fopen('outputLUDecomposition.txt','wt');
     [r,c] = size(solutionTable);
-    original = coefficient
+    original = coefficient;
     len = length(solutions);
     
     fprintf(fileID,'%4s\r\n','Matrix A');
@@ -60,9 +60,7 @@ function [solutionTable,finalMatrix,solutions,condition] = LUMethodMain(coeffici
     %U
     fprintf(fileID,'%4s\r\n','Matrix U');
     for i = (r-2*len+1):(r-len)
-        i
         for j = 1:c
-            j
             fprintf(fileID,'%08.10f  ',double(solutionTable(i,j)));
         end
         fprintf(fileID,'\r\n');

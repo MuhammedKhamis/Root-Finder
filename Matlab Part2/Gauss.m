@@ -3,7 +3,6 @@ function [ solutionTable,finalMatrix,solutions,condition] = Gauss(coefficient,re
 finalMatrix=help;
     if (condition==0)
         solutions=backSubistitution(help);
-        %disp(solutionTable);
     else
         solutions=0; 
         return;
@@ -11,7 +10,9 @@ finalMatrix=help;
     
     
     %output in file
-    fileID = fopen('outputGaussElimination.txt','wt');
+    %fileName = strcat('C:\Users\amrmh_000\Desktop\outputs\','outputGaussElimination.txt');
+    fileName = strcat(pwd,'\outputGaussElimination.txt');
+    fileID = fopen(fileName,'wt');
     fprintf(fileID,'%4s\r\n','Original Matrix');
     [r,c] = size(solutionTable);
     original = horzcat(coefficient,results);

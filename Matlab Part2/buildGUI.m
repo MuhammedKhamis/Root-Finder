@@ -38,7 +38,7 @@ function [ handles ] = buildGUI( handless )
     if(size(getappdata(handles.figure1,'selected_item'))==0)
         setappdata(handles.figure1,'selected_item',1);
     end
-    number = getappdata(handles.figure1,'selected_item')
+    number = getappdata(handles.figure1,'selected_item');
     showView(handles,number);
     
     %reset

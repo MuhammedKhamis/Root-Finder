@@ -32,33 +32,30 @@ try
     for i = 2 : iterations
         time = tic;
         for j = 1 : num_of_variables
-        res = 0;
-        for k = 1 : num_of_variables
-            if(k > j)
-                res = res + A(j, k) * x(i-1,k);
-            elseif(k < j)
-                res = res + A(j, k) * x(i,k);
+            res = 0;
+            for k = 1 : num_of_variables
+                if(k > j)
+                    res = res + A(j, k) * x(i-1,k);
+                elseif(k < j)
+                    res = res + A(j, k) * x(i,k);
+                end
+
             end
-
-        end
-
-
-        x(i,j) = (b(j) - res)/A(j,j);
-        er(i,j) = abs(x(i,j) - x(i - 1,j));
-
+            x(i,j) = (b(j) - res)/A(j,j);
+            er(i,j) = abs(x(i,j) - x(i - 1,j));
         end
         table(i, 1) = i;
         for j = 1 : num_of_variables
-        table(i,j + 1) = x(i-1, j);
-        if(isnan(x(i - 1,j)) | isinf(x(i-1,j)))
-            flagError = 1;
-        end
+            table(i,j + 1) = x(i-1, j);
+            if(isnan(x(i - 1,j)) | isinf(x(i-1,j)))
+                flagError = 1;
+            end
         end
         for j = 1 : num_of_variables
             table(i,j + num_of_variables + 1) = x(i,j);
             if(isnan(x(i,j))| isinf(x(i,j)))
-            flagError = 1;
-        end
+                flagError = 1;
+            end
         end
         for j = 1 : num_of_variables
             table(i,j + 2*num_of_variables + 1) = er(i,j);
@@ -72,18 +69,13 @@ try
             end
         end
         if (flag)
-           disp('Finished');
            break;
         end
     end
-    disp(table);
 catch e
     flagError = 1;
-    disp('Error');
     return;
 end
-       
-    
+           
     printOutputFile('outputGaussSeidel.txt',table);
 end
-%iteration  xi  yi  zi ......  xi+1  yi+1 zi+1 ......  

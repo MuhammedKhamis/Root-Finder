@@ -18,13 +18,12 @@ function [error,equations,init1,toler1,iter1,init2,toler2,iter2] = readFile(file
         set(handles.comment_textArea,'String','Successfully selected file');
         file = fullfile(pathName,fileName)
         fileID = fopen(file);
-        numberOfEquations = fscanf(fileID,'%d')
+        numberOfEquations = fscanf(fileID,'%d');
         indOfLine = 1;
         while ~feof(fileID)
-            %disp(indOfLine);
             indOfLine = indOfLine + 1;
             if indOfLine <= numberOfEquations+1
-                tline = fgetl(fileID)
+                tline = fgetl(fileID);
                 equations{indOfLine-1} = tline;
             else
                 type = fgetl(fileID);
@@ -53,10 +52,6 @@ function [error,equations,init1,toler1,iter1,init2,toler2,iter2] = readFile(file
         end
         fclose(fileID);
         
-        equations
-        init1
-        toler1
-        iter1
         set(handles.input_equations_textArea,'String',equations);
         set(handles.initial_values_txtArea,'String',init1);
         set(handles.tolerance_txtArea,'String',toler1);

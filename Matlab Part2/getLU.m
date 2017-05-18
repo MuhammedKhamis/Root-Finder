@@ -10,10 +10,8 @@ function [decomp err steps pos b] = getLU(A,tol,b)
     sizes = size(A);
     err = 0;
     steps = [];
+    decomp =[];
     L = zeros(size(A));
-    for i = 1 : size(A)
-        L(i,i) = 1;
-    end
     if(sizes(1) == sizes(2))
        pos = zeros(1,sizes(1));
        scale = zeros(1,sizes(1));
@@ -28,11 +26,13 @@ function [decomp err steps pos b] = getLU(A,tol,b)
        % main Decomposition
        for i = 1 : sizes(1)
           [pos, A, b, L] = pivot(A,pos,scale,i,sizes(1),b,L);
+          
+          %check for singular or near-singular cases
           if(abs(A(pos(i),i)/scale(pos(i))) < tol)
-              decomp = [];
-              steps = [];
-              pos = [];
-              err = 1;
+            err = 1;
+            decomp =[];
+            steps=[];
+            pos=[];
             return;
           end
           for j = i+1 : sizes(1)
@@ -46,7 +46,7 @@ function [decomp err steps pos b] = getLU(A,tol,b)
               % if you want to see the changes just comment the loop and
               % line before and after them
               % for tidy order
-              steps = [steps;getTityOrder(A,pos)];
+              steps = [steps;getTityOrder(A,pos)+eye(sizes(1))];
               % end tidy order
               %if you want to see the changes due to pivoting uncomment
               %this line put comment the lines above.
@@ -54,27 +54,17 @@ function [decomp err steps pos b] = getLU(A,tol,b)
           end          
        end
        % same as in A Matrix
-       steps = [steps;getTityOrder(L,pos)];
+       steps = [steps;getTityOrder(L,pos)+eye(sizes(1))];
        %steps = [steps;L];
        if(abs(A(pos(sizes(1)),sizes(1))/scale(pos(sizes(1)))) < tol)
-            decomp = [];
-            steps = [];
-            pos = [];
-            err = 1;
-            return;
+           err = 1;
+           decomp =[];
+           steps=[];
+           pos=[];
+           return;
        end
     else
-        decomp = [];
-        steps = [];
-        pos = [];
         err = 1;
     end
-    decomp = A;
-    for i =1:size(A)
-        for j = 1: size(A)
-            if(i>j)
-                decomp(i,j) = L(i,j);
-            end
-        end    
-    end
+    decomp = (A+L);
 end

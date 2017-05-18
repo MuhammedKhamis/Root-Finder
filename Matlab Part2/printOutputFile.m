@@ -1,9 +1,11 @@
 function [ ] = printOutputFile( fileName, table)
 %UNTITLED6 Summary of this function goes here
 %   Detailed explanation goes here
+    %fileName = strcat('C:\Users\amrmh_000\Desktop\outputs\',fileName);
+    fileName = strcat(pwd,strcat('\',fileName));
     fileID = fopen(fileName,'wt');
     [r,c] = size(table);
-    colNames = getColNames(double((c-2)/3))
+    colNames = getColNames(double((c-2)/3));
     
     fprintf(fileID,'      %s  ',colNames{1});
     for i= 2 : length(colNames)
@@ -23,4 +25,6 @@ function [ ] = printOutputFile( fileName, table)
             fprintf(fileID,'%10f   ',double(table(i,j)));
         end
     end
+    
+    fclose(fileID);
 end

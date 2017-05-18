@@ -12,7 +12,7 @@ if (condition==0)
                 finalMatrix( rowCounter,columnCounter)=factor* finalMatrix(diagonalCounter ,columnCounter)+ finalMatrix( rowCounter,columnCounter);
                  columnCounter=columnCounter+1;
             end
-              solutionTable=[solutionTable;finalMatrix];
+            solutionTable=[solutionTable;finalMatrix];
             rowCounter=rowCounter-1;
         end
         diagonalCounter=diagonalCounter+1;
@@ -20,8 +20,8 @@ if (condition==0)
     count=2;
     variables(1)=0;
     while (count<=lengthh(1))
-    variables=[variables;0];
-    count=count+1;
+        variables=[variables;0];
+        count=count+1;
     end
     diagonalCounter=1;
     while ( diagonalCounter<=lengthh(1))
@@ -36,11 +36,12 @@ else
 end
 
     %output in file
-    fileID = fopen('outputGaussJordan.txt','wt');
+    %fileName = strcat('C:\Users\amrmh_000\Desktop\outputs\',fileName);
+    fileName = strcat(pwd,'\outputGaussJordan.txt');
+    fileID = fopen(fileName,'wt');
     fprintf(fileID,'%4s\r\n','Original Matrix');
     [r,c] = size(solutionTable);
     original = horzcat(coefficient,results);
-    solutions
     len = length(solutions);
     
     %original matrix

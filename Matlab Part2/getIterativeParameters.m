@@ -22,11 +22,7 @@ function [initial,toler,itera,flag] = getIterativeParameters( handles, option, l
         itera = 50;
     else
         itera = str2num(itera);
-        disp('iterations');
-        disp(itera);
-        disp(double(itera));
         flag = logical(flag & (itera == double(itera))& (double(itera)>=1));
-        disp(flag);
     end;
 
     if(isempty(toler))
@@ -43,13 +39,10 @@ function [initial,toler,itera,flag] = getIterativeParameters( handles, option, l
         for i=1:length(initial)
             initiall(1,i) = str2num(char(initial(1,i)));
         end
-        disp('debug intital value');
-        disp(initiall)
         if(logical(logical(flag & (initiall == double(initiall)))&logical(flag & (length(initiall)==len))))
-            disp('valid');
+            flag = 1;
         else
             flag = 0;
-            disp('invalid');
         end;
         initial = initiall;
     end;

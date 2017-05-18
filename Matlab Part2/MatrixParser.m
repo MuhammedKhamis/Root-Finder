@@ -5,7 +5,6 @@ function [A,B,flag] = MatrixParser(data)
         cells = cellstr(data);
         cells = cellstr(strrep(cells(1:1:length(cells)),'=' , '=='));
         symbols = sym('x',[1 length(cells)]);
-        %strjoin(cells(1:1:length(cells)))
         [A, B] = equationsToMatrix(cells(1:1:length(cells)),symbols);
         
         flag = 1;

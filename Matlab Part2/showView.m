@@ -1,8 +1,6 @@
 function [ handles ] = showView( handles , selected_item)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-    disp('showView');
-    disp(selected_item);
     
     switch selected_item
         case 1

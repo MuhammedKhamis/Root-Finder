@@ -1,0 +1,68 @@
+function read(handles,hObject)
+    [FileName,PathName] = uigetfile('*.txt','Select the input file');
+    if(FileName == 0)
+        assert('wrong file.');
+    end
+    fileID = fopen(fullfile(PathName,FileName),'r');
+    %fileID = fopen(FileName,'r');
+    methodName = fgetl(fileID);
+    if(strcmp(methodName,'Bisection') ||strcmp(methodName,'False-position') ||strcmp(methodName,'Fixed point')||STRCMP(methodName,'Newton-Raphson') ||strcmp(tline,'Secant')||strcmp(methodName,'Bierge-vieta'))
+        handles.cell = methodName;
+    end
+    tline = fgetl(fileID);
+    if(validateInput(tline))
+        set(handles.edit1,'String',tline); 
+    else
+        return;
+    end
+    if(strcmp(methodName,'Bisection'))
+        tline = fgetl(fileID);
+        set(handles.edit4,'String',tline);
+        tline = fgetl(fileID);
+        set(handles.edit5,'String',tline);
+         set(handles.uipanel6,'visible','on');
+          set(handles.uipanel2,'visible','on');
+          set(handles.uipanel4,'visible','off');
+          set(handles.uipanel5,'visible','off');
+          set(handles.uipanel7,'visible','off');
+    end
+    if(strcmp(methodName,'False-position'))
+        tline = fgetl(fileID);
+        set(handles.edit4,'String',tline);
+        tline = fgetl(fileID);
+        set(handles.edit5,'String',tline);
+         set(handles.uipanel6,'visible','on');
+          set(handles.uipanel2,'visible','on');
+          set(handles.uipanel4,'visible','off');
+          set(handles.uipanel5,'visible','off');
+          set(handles.uipanel7,'visible','off');
+    end
+    if(strcmp(methodName,'Fixed point'))
+         tline = fgetl(fileID);
+         set(handles.edit6,'String',tline);
+    end
+    if(strcmp(methodName,'Newton-Raphson'))
+        tline = fgetl(fileID);
+        set(handles.edit6,'String',tline);
+    end
+    if(strcmp(methodName,'Secant'))
+         tline = fgetl(fileID);
+         set(handles.edit8,'String',tline);
+         tline = fgetl(fileID);
+         set(handles.edit9,'String',tline);
+    end
+    if(strcmp(methodName,'Bierge-vieta'))
+        tline = fgetl(fileID);
+        set(handles.edit10,'String',tline);
+    end
+        tline = fgetl(fileID);
+        if(tline ~= -1) 
+            set(handles.edit2,'String',tline);
+        end
+         tline = fgetl(fileID);
+        if(tline ~= -1)
+           set(handles.edit3,'String',tline);
+        end
+    fclose(fileID);
+    guidata(hObject,handles);
+end

@@ -4,7 +4,7 @@ function varargout = GUI2(varargin)
 %      singleton*.
 %
 %      H = GUI2 returns the handle to a new GUI2 or the handle to
-%      the existing singleton*.
+%      the existing singleton*. 
 %
 %      GUI2('CALLBACK',hObject,eventData,handles,...) calls the local
 %      function named CALLBACK in GUI2.M with the given input arguments.
@@ -84,7 +84,6 @@ function method_menu_Callback(hObject, eventdata, handles)
     selected_item = get(hObject,'Value');
     setappdata(handles.figure1,'selected_item',selected_item); 
     handles = showView(handles,selected_item);
-    get(handles.table,'Visible')
     %set(handles.table2,'Visible','off');
 % Hints: contents = cellstr(get(hObject,'String')) returns method_menu contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from method_menu
@@ -171,7 +170,7 @@ function solve_button_Callback(hObject, eventdata, handles)
    
     %getting input and parse it
     data = get(handles.input_equations_textArea,'String');
-    [A,B,flag] = MatrixParser(data)
+    [A,B,flag] = MatrixParser(data);
     if(flag == 0)
         handles = callError(handles.comment_textArea,'invalid input equations',handles);
         return
@@ -187,14 +186,11 @@ function solve_button_Callback(hObject, eventdata, handles)
             return;
         end
     elseif(ind == 5 | ind == 6)
-        [initial,tolerance,iteration,flag] = getIterativeParameters(handles,1,length(B))
+        [initial,tolerance,iteration,flag] = getIterativeParameters(handles,1,length(B));
         if(flag == 0 )
-            disp('error in  extra inputs');
             handles = callError(handles.comment_textArea,'invalid extra inputs',handles);
             return;
         end
-        disp('initial values');
-        disp(initial);
     else
     end;
     
@@ -232,7 +228,7 @@ function solve_button_Callback(hObject, eventdata, handles)
             end
             
         case 3
-            [solutionTable,finalMatrix,solutions,condition] = LUMethodMain(A,B)
+            [solutionTable,finalMatrix,solutions,condition] = LUMethodMain(A,B);
             if(condition == 0)
                 set(handles.table,'Data',{});
                 len = length(A);
@@ -245,7 +241,7 @@ function solve_button_Callback(hObject, eventdata, handles)
             end
             
         case 4
-            [solutionTable,finalMatrix,solutions,condition] = GaussJordan(A,B)
+            [solutionTable,finalMatrix,solutions,condition] = GaussJordan(A,B);
             if(condition == 0)
                 len = length(solutions);
                 originalMatrix = horzcat(A,B);
@@ -366,16 +362,11 @@ function next_button_Callback(hObject, eventdata, handles)
     startInd = getappdata(handles.figure1,'ind');
     % lenn = number of variables
     lenn = getappdata(handles.figure1,'len');
-    matrix = getappdata(handles.figure1,'solutionTable')
-    disp('start')
-    disp(startInd)
+    matrix = getappdata(handles.figure1,'solutionTable');
     [r,c] = size(matrix);
-    disp('rows ')
-    disp(r)
     if (startInd > r)
         %in case of LU Decompsition to show [y] then [x]
         if(getappdata(handles.figure1,'selected_item') == 3)
-            disp('LU');
             if(startInd == r+1)
                 set(handles.table,'Data',getappdata(handles.figure1,'ySolutions'));
                 setappdata(handles.figure1,'ind',r+2);
@@ -390,7 +381,6 @@ function next_button_Callback(hObject, eventdata, handles)
         setappdata(handles.figure1,'ind',r+2);
         return;
     end
-    %disp(startInd)
     cell = getCell(startInd,lenn,matrix);
     setappdata(handles.figure1,'ind',startInd+lenn);
     set(handles.table,'Data',cell);
@@ -406,15 +396,12 @@ function prev_button_Callback(hObject, eventdata, handles)
     lenn = getappdata(handles.figure1,'len');
     matrix = getappdata(handles.figure1,'solutionTable');
     [r,c] = size(matrix);
-    disp(lenn);
-    disp(endInd);
-    
+   
     if (endInd - 2*lenn < 1)
-        cell = getCell(1,lenn,matrix)
+        cell = getCell(1,lenn,matrix);
         set(handles.table,'Data',cell);
         return;
     end
-    %disp(startInd)
     if(endInd == r + 2)
         setappdata(handles.figure1,'ind',r+1);
         cell = getCell(r-lenn+1,lenn,matrix);

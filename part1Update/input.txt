@@ -1,4 +1,0 @@
-False-position
-x^3-x-1
-1
-2
